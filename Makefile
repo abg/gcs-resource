@@ -1,19 +1,14 @@
-GO     := GO15VENDOREXPERIMENT=1 go
-GINKGO := ginkgo
-pkgs   = $(shell $(GO) list ./... | grep -v /vendor/)
+GINKGO := go run github.com/onsi/ginkgo/v2/ginkgo
+pkgs   = $(shell go list ./...)
 
 DOCKER_IMAGE_NAME ?= gcs-resource
 DOCKER_IMAGE_TAG  ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
 
 default: format build unit-tests
 
-deps:
-	@$(GO) get github.com/onsi/ginkgo/ginkgo
-	@$(GO) get github.com/onsi/gomega
-
 format:
 	@echo ">> formatting code"
-	@$(GO) fmt $(pkgs)
+	@go fmt $(pkgs)
 
 style:
 	@echo ">> checking code style"
@@ -21,18 +16,18 @@ style:
 
 vet:
 	@echo ">> vetting code"
-	@$(GO) vet $(pkgs)
+	@go vet $(pkgs)
 
 build:
 	@echo ">> building binaries"
-	@$(GO) build -o assets/in ./cmd/in
-	@$(GO) build -o assets/out ./cmd/out
-	@$(GO) build -o assets/check ./cmd/check
+	@go build -o assets/in ./cmd/in
+	@go build -o assets/out ./cmd/out
+	@go build -o assets/check ./cmd/check
 
 unit-tests: deps
 	@echo ">> running unit tests"
 	@$(GINKGO) version
-	@$(GINKGO) -r -race -p -skipPackage integration,vendor
+	@$(GINKGO) -r -race -p -skip-package=integration,vendor
 
 integration-tests: deps
 	@echo ">> running integration tests"

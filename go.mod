@@ -10,7 +10,7 @@ require (
 	github.com/h2non/filetype v1.1.3
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
-	github.com/onsi/ginkgo v1.16.5
+	github.com/onsi/ginkgo/v2 v2.9.5
 	github.com/onsi/gomega v1.27.7
 	google.golang.org/api v0.20.1-0.20200402231025-ff07024126d9
 )
@@ -22,11 +22,13 @@ require (
 	github.com/andybalholm/brotli v1.0.1 // indirect
 	github.com/dsnet/compress v0.0.2-0.20210315054119-f66993602bf5 // indirect
 	github.com/fatih/color v1.15.0 // indirect
-	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/klauspost/compress v1.11.4 // indirect
@@ -36,7 +38,7 @@ require (
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-runewidth v0.0.12 // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
-	github.com/nxadm/tail v1.4.8 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/pierrec/lz4/v4 v4.1.2 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/ulikunitz/xz v0.5.9 // indirect
@@ -53,7 +55,6 @@ require (
 	google.golang.org/genproto v0.0.0-20200403120447-c50568487044 // indirect
 	google.golang.org/grpc v1.28.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.0.1-2020.1.3 // indirect
 )
