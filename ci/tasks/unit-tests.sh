@@ -1,9 +1,10 @@
 #!/bin/bash
 
-set -e
+set -o errexit -o nounset -o pipefail
 
-export GOPATH=$PWD/go
-export PATH=$GOPATH/bin:$PATH
+export GOCACHE="$PWD/gocache"
+export GOMODCACHE="$PWD/gocache"
 
-cd $GOPATH/src/github.com/frodenas/gcs-resource
-make
+apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
+
+make -C gcs-resource

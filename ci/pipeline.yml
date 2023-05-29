@@ -9,19 +9,17 @@ groups:
 jobs:
   - name: unit-tests
     plan:
-      - aggregate:
-        - {trigger: true, get: gcs-resource-src}
+      - {trigger: true, get: gcs-resource, resource: gcs-resource-src}
 
       - task: unit-tests
-        file: gcs-resource-src/ci/tasks/unit-tests.yml
+        file: gcs-resource/ci/tasks/unit-tests.yml
 
   - name: integration-tests
     plan:
-      - aggregate:
-        - {trigger: true, passed: [unit-tests], get: gcs-resource-src}
+      - {trigger: true, passed: [unit-tests], get: gcs-resource, resource: gcs-resource-src}
 
       - task: integration-tests
-        file: gcs-resource-src/ci/tasks/integration-tests.yml
+        file: gcs-resource/ci/tasks/integration-tests.yml
         params:
           GCS_RESOURCE_JSON_KEY: {{gcs_resource_json_key}}
           GCS_RESOURCE_BUCKET_NAME: {{gcs_resource_bucket_name}}
@@ -29,26 +27,22 @@ jobs:
 
   - name: build-image
     plan:
-      - aggregate:
-        - {trigger: true, passed: [integration-tests], get: gcs-resource-src}
-
-      - task: build
-        file: gcs-resource-src/ci/tasks/build.yml
+      - {trigger: true, passed: [integration-tests], get: gcs-resource, resource: gcs-resource-src}
 
       - put: gcs-resource-image
         params:
-          build: built-resource
+          build: gcs-resource
 
 resources:
   - name: gcs-resource-src
     type: git
     source:
-      uri: https://github.com/frodenas/gcs-resource.git
-      branch: master
+      uri: https://github.com/abg/gcs-resource.git
+      branch: main
 
   - name: gcs-resource-image
     type: docker-image
     source:
       username: {{docker_username}}
       password: {{docker_password}}
-      repository: frodenas/gcs-resource
+      repository: dedicatedmysql/gcs-resource

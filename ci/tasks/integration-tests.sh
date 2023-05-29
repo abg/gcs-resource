@@ -1,13 +1,12 @@
 #!/bin/bash
 
-set -e
+set -o errexit -o nounset -o pipefail
 
-: ${GCS_RESOURCE_JSON_KEY:?}
-: ${GCS_RESOURCE_BUCKET_NAME:?}
-: ${GCS_RESOURCE_VERSIONED_BUCKET_NAME:?}
+export GOCACHE="$PWD/gocache"
+export GOMODCACHE="$PWD/gocache"
 
-export GOPATH=$PWD/go
-export PATH=$GOPATH/bin:$PATH
+: "${GCS_RESOURCE_JSON_KEY:?}"
+: "${GCS_RESOURCE_BUCKET_NAME:?}"
+: "${GCS_RESOURCE_VERSIONED_BUCKET_NAME:?}"
 
-cd $GOPATH/src/github.com/frodenas/gcs-resource
-make integration-tests
+make -C gcs-resource integration-tests

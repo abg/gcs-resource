@@ -32,7 +32,7 @@ unit-tests: deps
 integration-tests: deps
 	@echo ">> running integration tests"
 	@$(GINKGO) version
-	@$(GINKGO) -r -p integration
+	@$(GINKGO) -r integration
 
 docker:
 	@echo ">> building docker image"
