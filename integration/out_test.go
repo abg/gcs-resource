@@ -15,10 +15,10 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 
-	"github.com/frodenas/gcs-resource"
+	gcsresource "github.com/frodenas/gcs-resource"
 	"github.com/frodenas/gcs-resource/out"
+	"github.com/google/uuid"
 	"github.com/mholt/archiver/v3"
-	"github.com/nu7hatch/gouuid"
 )
 
 var _ = Describe("out", func() {
@@ -193,9 +193,8 @@ var _ = Describe("out", func() {
 		)
 
 		BeforeEach(func() {
-			guid, err := uuid.NewV4()
-			Expect(err).ToNot(HaveOccurred())
-			directoryPrefix = "out-request-files-" + guid.String()
+			guid := uuid.NewString()
+			directoryPrefix = "out-request-files-" + guid
 
 			err = ioutil.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
 			Expect(err).ToNot(HaveOccurred())
@@ -343,9 +342,8 @@ var _ = Describe("out", func() {
 		)
 
 		BeforeEach(func() {
-			guid, err := uuid.NewV4()
-			Expect(err).ToNot(HaveOccurred())
-			directoryPrefix = "out-request-files-" + guid.String()
+			guid := uuid.NewString()
+			directoryPrefix = "out-request-files-" + guid
 
 			err = ioutil.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
 			Expect(err).ToNot(HaveOccurred())
@@ -494,9 +492,8 @@ var _ = Describe("out", func() {
 		)
 
 		BeforeEach(func() {
-			guid, err := uuid.NewV4()
-			Expect(err).ToNot(HaveOccurred())
-			directoryPrefix = "out-request-files-" + guid.String()
+			guid := uuid.NewString()
+			directoryPrefix = "out-request-files-" + guid
 
 			// upload the .pivotal file
 			filePath = filepath.Join(sourceDir, "file-to-upload")

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
 	//"strconv"
 
 	. "github.com/onsi/ginkgo"
@@ -16,9 +17,9 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 
-	"github.com/frodenas/gcs-resource"
+	gcsresource "github.com/frodenas/gcs-resource"
 	"github.com/frodenas/gcs-resource/check"
-	"github.com/nu7hatch/gouuid"
+	"github.com/google/uuid"
 )
 
 var _ = Describe("check", func() {
@@ -99,9 +100,8 @@ var _ = Describe("check", func() {
 		)
 
 		BeforeEach(func() {
-			guid, err := uuid.NewV4()
-			Expect(err).ToNot(HaveOccurred())
-			directoryPrefix = "check-request-files-" + guid.String()
+			guid := uuid.NewString()
+			directoryPrefix = "check-request-files-" + guid
 		})
 
 		Context("when the bucket does not exist", func() {
@@ -349,9 +349,7 @@ var _ = Describe("check", func() {
 		)
 
 		BeforeEach(func() {
-			guid, err := uuid.NewV4()
-			Expect(err).ToNot(HaveOccurred())
-			directoryPrefix = "check-request-files-" + guid.String()
+			directoryPrefix = "check-request-files-" + uuid.NewString()
 		})
 
 		Context("when the bucket is not versioned", func() {

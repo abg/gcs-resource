@@ -18,7 +18,7 @@ import (
 
 	gcsresource "github.com/frodenas/gcs-resource"
 	"github.com/frodenas/gcs-resource/in"
-	uuid "github.com/nu7hatch/gouuid"
+	"github.com/google/uuid"
 )
 
 var _ = Describe("in", func() {
@@ -108,9 +108,8 @@ var _ = Describe("in", func() {
 		)
 
 		BeforeEach(func() {
-			guid, err := uuid.NewV4()
-			Expect(err).ToNot(HaveOccurred())
-			directoryPrefix = "in-request-files-" + guid.String()
+			guid := uuid.NewString()
+			directoryPrefix = "in-request-files-" + guid
 
 			tempFile, err := ioutil.TempFile("", directoryPrefix)
 			Expect(err).ToNot(HaveOccurred())
@@ -531,9 +530,8 @@ var _ = Describe("in", func() {
 		)
 
 		BeforeEach(func() {
-			guid, err := uuid.NewV4()
-			Expect(err).ToNot(HaveOccurred())
-			directoryPrefix = "in-request-files-" + guid.String()
+			guid := uuid.NewString()
+			directoryPrefix = "in-request-files-" + guid
 		})
 
 		Context("when the bucket is versioned", func() {
