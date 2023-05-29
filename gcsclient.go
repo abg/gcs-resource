@@ -1,15 +1,16 @@
 package gcsresource
 
 import (
-	"cloud.google.com/go/storage"
 	"context"
 	"errors"
 	"fmt"
-	"google.golang.org/api/iterator"
-	"google.golang.org/api/option"
-	"gopkg.in/cheggaaa/pb.v1"
 	"io"
 	"os"
+
+	"cloud.google.com/go/storage"
+	"github.com/cheggaaa/pb/v3"
+	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 )
 
 //go:generate counterfeiter -o fakes/fake_gcsclient.go . GCSClient
@@ -299,12 +300,8 @@ func (gcsclient *gcsclient) getObjectGenerations(bucketName string, objectPath s
 }
 
 func (gcsclient *gcsclient) newProgressBar(total int64) *pb.ProgressBar {
-	progress := pb.New64(total)
-
-	progress.Output = gcsclient.progressOutput
-	progress.ShowSpeed = true
-	progress.Units = pb.U_BYTES
-	progress.NotPrint = true
-
-	return progress.SetWidth(80)
+	return pb.New64(total).
+		Set(pb.Bytes, true).
+		SetWriter(gcsclient.progressOutput).
+		SetWidth(80)
 }
