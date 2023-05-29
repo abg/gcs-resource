@@ -7,7 +7,7 @@ require (
 	github.com/cheggaaa/pb/v3 v3.1.2
 	github.com/cppforlife/go-semi-semantic v0.0.0-20160921010311-576b6af77ae4
 	github.com/google/uuid v1.3.0
-	github.com/h2non/filetype v1.0.12
+	github.com/h2non/filetype v1.1.3
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
 	github.com/onsi/ginkgo v1.16.5
