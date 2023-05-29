@@ -17,7 +17,7 @@ import (
 
 	"github.com/frodenas/gcs-resource"
 	"github.com/frodenas/gcs-resource/out"
-	"github.com/mholt/archiver"
+	"github.com/mholt/archiver/v3"
 	"github.com/nu7hatch/gouuid"
 )
 
