@@ -51,7 +51,7 @@ func (command *InCommand) Run(destinationDir string, request InRequest) (InRespo
 }
 
 func (command *InCommand) createDirectory(destinationDir string) error {
-	return os.MkdirAll(destinationDir, 0755)
+	return os.MkdirAll(destinationDir, 0o755)
 }
 
 func (command *InCommand) inByRegex(destinationDir string, request InRequest, skipDownload bool) (InResponse, error) {
@@ -64,7 +64,7 @@ func (command *InCommand) inByRegex(destinationDir string, request InRequest, sk
 	if isInitialVersion {
 		initialFilename := path.Base(request.Version.Path)
 
-		err = os.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0644)
+		err = os.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0o644)
 		if err != nil {
 			return InResponse{}, err
 		}
@@ -145,7 +145,7 @@ func (command *InCommand) inByVersionedFile(destinationDir string, request InReq
 	if isInitialVersion {
 		initialFilename := path.Base(request.Source.VersionedFile)
 
-		err = os.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0644)
+		err = os.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0o644)
 		if err != nil {
 			return InResponse{}, err
 		}
@@ -188,19 +188,19 @@ func (command *InCommand) inByVersionedFile(destinationDir string, request InReq
 	}, nil
 }
 
-func (command *InCommand) writeVersionFile(version string, destinationDir string) error {
-	return os.WriteFile(filepath.Join(destinationDir, "version"), []byte(version), 0644)
+func (command *InCommand) writeVersionFile(version, destinationDir string) error {
+	return os.WriteFile(filepath.Join(destinationDir, "version"), []byte(version), 0o644)
 }
 
 func (command *InCommand) writeGenerationFile(generation int64, destinationDir string) error {
-	return os.WriteFile(filepath.Join(destinationDir, "generation"), []byte(strconv.FormatInt(generation, 10)), 0644)
+	return os.WriteFile(filepath.Join(destinationDir, "generation"), []byte(strconv.FormatInt(generation, 10)), 0o644)
 }
 
-func (command *InCommand) writeURLFile(url string, destinationDir string) error {
-	return os.WriteFile(filepath.Join(destinationDir, "url"), []byte(url), 0644)
+func (command *InCommand) writeURLFile(url, destinationDir string) error {
+	return os.WriteFile(filepath.Join(destinationDir, "url"), []byte(url), 0o644)
 }
 
-func (command *InCommand) downloadFile(bucketName string, objectPath string, generation int64, localPath string) error {
+func (command *InCommand) downloadFile(bucketName, objectPath string, generation int64, localPath string) error {
 	return command.gcsClient.DownloadFile(
 		bucketName,
 		objectPath,
@@ -210,7 +210,6 @@ func (command *InCommand) downloadFile(bucketName string, objectPath string, gen
 }
 
 func (command *InCommand) unpackFile(sourcePath string) error {
-
 	var (
 		errorMessage = "failed to extract '%s' with the 'params.unpack' option enabled: %s"
 		fileName     = filepath.Base(sourcePath)
@@ -231,7 +230,8 @@ func (command *InCommand) unpackFile(sourcePath string) error {
 
 	return nil
 }
-func (command *InCommand) metadata(objectPath string, url string) []gcsresource.MetadataPair {
+
+func (command *InCommand) metadata(objectPath, url string) []gcsresource.MetadataPair {
 	objectFilename := filepath.Base(objectPath)
 
 	metadata := []gcsresource.MetadataPair{

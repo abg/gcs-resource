@@ -15,12 +15,12 @@ import (
 
 //go:generate counterfeiter -o fakes/fake_gcsclient.go . GCSClient
 type GCSClient interface {
-	BucketObjects(bucketName string, prefix string) ([]string, error)
-	ObjectGenerations(bucketName string, objectPath string) ([]int64, error)
-	DownloadFile(bucketName string, objectPath string, generation int64, localPath string) error
-	UploadFile(bucketName string, objectPath string, objectContentType string, localPath string, predefinedACL string, cacheControl string) (int64, error)
-	URL(bucketName string, objectPath string, generation int64) (string, error)
-	DeleteObject(bucketName string, objectPath string, generation int64) error
+	BucketObjects(bucketName, prefix string) ([]string, error)
+	ObjectGenerations(bucketName, objectPath string) ([]int64, error)
+	DownloadFile(bucketName, objectPath string, generation int64, localPath string) error
+	UploadFile(bucketName, objectPath, objectContentType, localPath, predefinedACL, cacheControl string) (int64, error)
+	URL(bucketName, objectPath string, generation int64) (string, error)
+	DeleteObject(bucketName, objectPath string, generation int64) error
 	GetBucketObjectInfo(bucketName, objectPath string) (*storage.ObjectAttrs, error)
 }
 
@@ -34,7 +34,7 @@ func NewGCSClient(
 	jsonKey string,
 ) (GCSClient, error) {
 	var err error
-	var userAgent = "gcs-resource/0.0.1"
+	userAgent := "gcs-resource/0.0.1"
 
 	var storageService *storage.Client
 	if jsonKey == "" {
@@ -57,7 +57,7 @@ func NewGCSClient(
 	}, nil
 }
 
-func (gcsclient *gcsclient) BucketObjects(bucketName string, prefix string) ([]string, error) {
+func (gcsclient *gcsclient) BucketObjects(bucketName, prefix string) ([]string, error) {
 	bucketObjects, err := gcsclient.getBucketObjects(bucketName, prefix)
 	if err != nil {
 		return []string{}, err
@@ -66,7 +66,7 @@ func (gcsclient *gcsclient) BucketObjects(bucketName string, prefix string) ([]s
 	return bucketObjects, nil
 }
 
-func (gcsclient *gcsclient) ObjectGenerations(bucketName string, objectPath string) ([]int64, error) {
+func (gcsclient *gcsclient) ObjectGenerations(bucketName, objectPath string) ([]int64, error) {
 	isBucketVersioned, err := gcsclient.getBucketVersioning(bucketName)
 	if err != nil {
 		return []int64{}, err
@@ -84,7 +84,7 @@ func (gcsclient *gcsclient) ObjectGenerations(bucketName string, objectPath stri
 	return objectGenerations, nil
 }
 
-func (gcsclient *gcsclient) DownloadFile(bucketName string, objectPath string, generation int64, localPath string) error {
+func (gcsclient *gcsclient) DownloadFile(bucketName, objectPath string, generation int64, localPath string) error {
 	isBucketVersioned, err := gcsclient.getBucketVersioning(bucketName)
 	if err != nil {
 		return err
@@ -127,7 +127,7 @@ func (gcsclient *gcsclient) DownloadFile(bucketName string, objectPath string, g
 	return nil
 }
 
-func (gcsclient *gcsclient) UploadFile(bucketName string, objectPath string, objectContentType string, localPath string, predefinedACL string, cacheControl string) (int64, error) {
+func (gcsclient *gcsclient) UploadFile(bucketName, objectPath, objectContentType, localPath, predefinedACL, cacheControl string) (int64, error) {
 	isBucketVersioned, err := gcsclient.getBucketVersioning(bucketName)
 	if err != nil {
 		return 0, err
@@ -192,7 +192,7 @@ func (gcsclient *gcsclient) UploadFile(bucketName string, objectPath string, obj
 	return 0, nil
 }
 
-func (gcsclient *gcsclient) URL(bucketName string, objectPath string, generation int64) (string, error) {
+func (gcsclient *gcsclient) URL(bucketName, objectPath string, generation int64) (string, error) {
 	ctx := context.Background()
 	objectHandle := gcsclient.storageService.Bucket(bucketName).Object(objectPath)
 	if generation != 0 {
@@ -213,7 +213,7 @@ func (gcsclient *gcsclient) URL(bucketName string, objectPath string, generation
 	return url, nil
 }
 
-func (gcsclient *gcsclient) DeleteObject(bucketName string, objectPath string, generation int64) error {
+func (gcsclient *gcsclient) DeleteObject(bucketName, objectPath string, generation int64) error {
 	var err error
 	ctx := context.Background()
 	if generation != 0 {
@@ -230,14 +230,13 @@ func (gcsclient *gcsclient) DeleteObject(bucketName string, objectPath string, g
 func (gcsclient *gcsclient) GetBucketObjectInfo(bucketName, objectPath string) (*storage.ObjectAttrs, error) {
 	ctx := context.Background()
 	attrs, err := gcsclient.storageService.Bucket(bucketName).Object(objectPath).Attrs(ctx)
-
 	if err != nil {
 		return nil, err
 	}
 	return attrs, nil
 }
 
-func (gcsclient *gcsclient) getBucketObjects(bucketName string, prefix string) ([]string, error) {
+func (gcsclient *gcsclient) getBucketObjects(bucketName, prefix string) ([]string, error) {
 	var bucketObjects []string
 	ctx := context.Background()
 	pageToken := ""
@@ -271,7 +270,7 @@ func (gcsclient *gcsclient) getBucketVersioning(bucketName string) (bool, error)
 	return bucket.VersioningEnabled, nil
 }
 
-func (gcsclient *gcsclient) getObjectGenerations(bucketName string, objectPath string) ([]int64, error) {
+func (gcsclient *gcsclient) getObjectGenerations(bucketName, objectPath string) ([]int64, error) {
 	var objectGenerations []int64
 	ctx := context.Background()
 	pageToken := ""

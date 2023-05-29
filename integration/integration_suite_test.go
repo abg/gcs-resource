@@ -17,14 +17,18 @@ func TestIntegration(t *testing.T) {
 	RegisterFailHandler(Fail)
 }
 
-var jsonKey = os.Getenv("GCS_RESOURCE_JSON_KEY")
-var bucketName = os.Getenv("GCS_RESOURCE_BUCKET_NAME")
-var versionedBucketName = os.Getenv("GCS_RESOURCE_VERSIONED_BUCKET_NAME")
-var gcsClient gcsresource.GCSClient
+var (
+	jsonKey             = os.Getenv("GCS_RESOURCE_JSON_KEY")
+	bucketName          = os.Getenv("GCS_RESOURCE_BUCKET_NAME")
+	versionedBucketName = os.Getenv("GCS_RESOURCE_VERSIONED_BUCKET_NAME")
+	gcsClient           gcsresource.GCSClient
+)
 
-var checkPath string
-var inPath string
-var outPath string
+var (
+	checkPath string
+	inPath    string
+	outPath   string
+)
 
 type suiteData struct {
 	CheckPath string

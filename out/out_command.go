@@ -93,15 +93,15 @@ func parentDir(regexp string) string {
 	return regexp[:strings.LastIndex(regexp, "/")+1]
 }
 
-func (command *OutCommand) metadata(objectPath string, url string) []gcsresource.MetadataPair {
+func (command *OutCommand) metadata(objectPath, url string) []gcsresource.MetadataPair {
 	objectFilename := filepath.Base(objectPath)
 
 	metadata := []gcsresource.MetadataPair{
-		gcsresource.MetadataPair{
+		{
 			Name:  "filename",
 			Value: objectFilename,
 		},
-		gcsresource.MetadataPair{
+		{
 			Name:  "url",
 			Value: url,
 		},

@@ -1,15 +1,15 @@
 package in_test
 
 import (
+	"io"
+	"os"
+	"path/filepath"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/onsi/gomega/gexec"
-	"io"
-	"os"
-	"path/filepath"
 )
 
 var inPath string
@@ -30,10 +30,10 @@ func TestIn(t *testing.T) {
 	RunSpecs(t, "In Suite")
 }
 
-type gcsDownloadTask func(bucketName string, objectPath string, generation int64, localPath string) error
+type gcsDownloadTask func(bucketName, objectPath string, generation int64, localPath string) error
 
 func gcsDownloadTaskStub(name string) gcsDownloadTask {
-	return func(bucketName string, objectPath string, generation int64, localPath string) error {
+	return func(bucketName, objectPath string, generation int64, localPath string) error {
 		sourcePath := filepath.Join("fixtures", name)
 		Expect(sourcePath).To(BeAnExistingFile())
 
@@ -43,7 +43,7 @@ func gcsDownloadTaskStub(name string) gcsDownloadTask {
 
 		destinationDir := filepath.Dir(localPath)
 
-		to, err := os.OpenFile(filepath.Join(destinationDir, name), os.O_RDWR|os.O_CREATE, 0600)
+		to, err := os.OpenFile(filepath.Join(destinationDir, name), os.O_RDWR|os.O_CREATE, 0o600)
 		Expect(err).NotTo(HaveOccurred())
 		defer to.Close()
 

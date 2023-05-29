@@ -10,11 +10,11 @@ func (e Extractions) Len() int {
 	return len(e)
 }
 
-func (e Extractions) Less(i int, j int) bool {
+func (e Extractions) Less(i, j int) bool {
 	return e[i].Version.IsLt(e[j].Version)
 }
 
-func (e Extractions) Swap(i int, j int) {
+func (e Extractions) Swap(i, j int) {
 	e[i], e[j] = e[j], e[i]
 }
 

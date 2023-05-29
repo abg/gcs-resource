@@ -31,7 +31,7 @@ var _ = Describe("Out Command", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			sourceDir = filepath.Join(tmpPath, "source")
-			err = os.MkdirAll(sourceDir, 0755)
+			err = os.MkdirAll(sourceDir, 0o755)
 			Expect(err).ToNot(HaveOccurred())
 
 			request = OutRequest{
@@ -55,7 +55,7 @@ var _ = Describe("Out Command", func() {
 
 		createFile := func(path string) {
 			fullPath := filepath.Join(sourceDir, path)
-			err := os.MkdirAll(filepath.Dir(fullPath), 0755)
+			err := os.MkdirAll(filepath.Dir(fullPath), 0o755)
 			Expect(err).ToNot(HaveOccurred())
 
 			file, err := os.Create(fullPath)

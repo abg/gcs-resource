@@ -368,7 +368,6 @@ var _ = Describe("In Command", func() {
 					})
 
 					Context("when a zip file is returned", func() {
-
 						BeforeEach(func() {
 							request.Version.Path = "file-0.zip"
 
@@ -385,7 +384,6 @@ var _ = Describe("In Command", func() {
 					})
 
 					Context("when a tar file is returned", func() {
-
 						BeforeEach(func() {
 							request.Version.Path = "file-0.tar"
 
@@ -402,7 +400,6 @@ var _ = Describe("In Command", func() {
 					})
 
 					Context("when a gzip file is returned", func() {
-
 						BeforeEach(func() {
 							request.Version.Path = "file-0.txt.gz"
 
@@ -419,7 +416,6 @@ var _ = Describe("In Command", func() {
 					})
 
 					Context("when a tgz file is returned", func() {
-
 						BeforeEach(func() {
 							request.Version.Path = "file-0.tgz"
 
@@ -436,7 +432,6 @@ var _ = Describe("In Command", func() {
 					})
 
 					Context("when an uncompressed or unsupported file is returned", func() {
-
 						BeforeEach(func() {
 							request.Version.Path = "file.txt"
 
@@ -500,7 +495,6 @@ var _ = Describe("In Command", func() {
 						contents, err := os.ReadFile(versionFile)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(string(contents)).To(Equal("foo"))
-
 					})
 				})
 			})
@@ -663,7 +657,6 @@ var _ = Describe("In Command", func() {
 				})
 
 				Context("when a zip file is returned", func() {
-
 					BeforeEach(func() {
 						request.Source.VersionedFile = "file-0.zip"
 
@@ -680,7 +673,6 @@ var _ = Describe("In Command", func() {
 				})
 
 				Context("when a tar file is returned", func() {
-
 					BeforeEach(func() {
 						request.Source.VersionedFile = "file-0.tar"
 
@@ -697,7 +689,6 @@ var _ = Describe("In Command", func() {
 				})
 
 				Context("when a gzip file is returned", func() {
-
 					BeforeEach(func() {
 						request.Source.VersionedFile = "file-0.txt.gz"
 
@@ -714,7 +705,6 @@ var _ = Describe("In Command", func() {
 				})
 
 				Context("when a tgz file is returned", func() {
-
 					BeforeEach(func() {
 						request.Source.VersionedFile = "file-0.tgz"
 
@@ -731,7 +721,6 @@ var _ = Describe("In Command", func() {
 				})
 
 				Context("when an uncompressed or unsupported file is returned", func() {
-
 					BeforeEach(func() {
 						request.Source.VersionedFile = "file.txt"
 

@@ -49,9 +49,7 @@ var _ = Describe("check", func() {
 	})
 
 	Describe("when the request is invalid", func() {
-		var (
-			checkRequest check.CheckRequest
-		)
+		var checkRequest check.CheckRequest
 
 		BeforeEach(func() {
 			checkRequest = check.CheckRequest{
@@ -180,19 +178,19 @@ var _ = Describe("check", func() {
 				Expect(err).ToNot(HaveOccurred())
 				tempFile.Close()
 
-				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-1"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-1"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
 				_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-check-1"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-3"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-3"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
 				_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-check-3"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-5"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-5"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
 				_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-check-5"), "", tempFile.Name(), "", "")
@@ -449,19 +447,19 @@ var _ = Describe("check", func() {
 				Expect(err).ToNot(HaveOccurred())
 				tempFile.Close()
 
-				err = os.WriteFile(tempFile.Name(), []byte("generation-1"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("generation-1"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
 				generation1, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = os.WriteFile(tempFile.Name(), []byte("generation-2"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("generation-2"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
 				generation2, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = os.WriteFile(tempFile.Name(), []byte("generation-3"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("generation-3"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
 				generation3, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")

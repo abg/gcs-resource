@@ -57,9 +57,7 @@ var _ = Describe("out", func() {
 	})
 
 	Describe("when the request is invalid", func() {
-		var (
-			outRequest out.OutRequest
-		)
+		var outRequest out.OutRequest
 
 		BeforeEach(func() {
 			outRequest = out.OutRequest{
@@ -137,9 +135,7 @@ var _ = Describe("out", func() {
 	})
 
 	Describe("when finding the local file to upload", func() {
-		var (
-			outRequest out.OutRequest
-		)
+		var outRequest out.OutRequest
 
 		BeforeEach(func() {
 			outRequest = out.OutRequest{
@@ -167,10 +163,10 @@ var _ = Describe("out", func() {
 
 		Context("when there are more than one match", func() {
 			BeforeEach(func() {
-				err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload-1"), []byte("contents"), 0755)
+				err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload-1"), []byte("contents"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
-				err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload-2"), []byte("contents"), 0755)
+				err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload-2"), []byte("contents"), 0o755)
 				Expect(err).ToNot(HaveOccurred())
 
 				outRequest.Params.File = "file-to-upload-*"
@@ -196,7 +192,7 @@ var _ = Describe("out", func() {
 			guid := uuid.NewString()
 			directoryPrefix = "out-request-files-" + guid
 
-			err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
+			err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0o755)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -345,7 +341,7 @@ var _ = Describe("out", func() {
 			guid := uuid.NewString()
 			directoryPrefix = "out-request-files-" + guid
 
-			err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
+			err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0o755)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -499,7 +495,7 @@ var _ = Describe("out", func() {
 			filePath = filepath.Join(sourceDir, "file-to-upload")
 			tarballName = "output-success.zip"
 
-			err = os.WriteFile(filePath, []byte("contents"), 0755)
+			err = os.WriteFile(filePath, []byte("contents"), 0o755)
 			Expect(err).ToNot(HaveOccurred())
 
 			err = archiver.Archive([]string{filePath}, filepath.Join(sourceDir, tarballName))

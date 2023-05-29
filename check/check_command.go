@@ -3,6 +3,7 @@ package check
 import (
 	"errors"
 	"fmt"
+
 	"github.com/frodenas/gcs-resource"
 	"github.com/frodenas/gcs-resource/versions"
 )

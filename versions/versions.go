@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cppforlife/go-semi-semantic/version"
+
 	"github.com/frodenas/gcs-resource"
 )
 
@@ -25,7 +26,7 @@ func GetBucketObjectVersions(gcsClient gcsresource.GCSClient, source gcsresource
 		gcsresource.Fatal("finding matches", err)
 	}
 
-	var extractions = make(Extractions, 0, len(matchingPaths))
+	extractions := make(Extractions, 0, len(matchingPaths))
 	for _, path := range matchingPaths {
 		extraction, ok := Extract(path, regexp)
 
@@ -83,7 +84,7 @@ func MatchUnanchored(paths []string, pattern string) ([]string, error) {
 	return matched, nil
 }
 
-func Extract(path string, pattern string) (Extraction, bool) {
+func Extract(path, pattern string) (Extraction, bool) {
 	compiled := regexp.MustCompile(pattern)
 	matches := compiled.FindStringSubmatch(path)
 

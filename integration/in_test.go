@@ -57,9 +57,7 @@ var _ = Describe("in", func() {
 	})
 
 	Describe("when the request is invalid", func() {
-		var (
-			inRequest in.InRequest
-		)
+		var inRequest in.InRequest
 
 		BeforeEach(func() {
 			inRequest = in.InRequest{
@@ -115,19 +113,19 @@ var _ = Describe("in", func() {
 			Expect(err).ToNot(HaveOccurred())
 			tempFile.Close()
 
-			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-1"), 0755)
+			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-1"), 0o755)
 			Expect(err).ToNot(HaveOccurred())
 
 			_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-download-1"), "", tempFile.Name(), "", "")
 			Expect(err).ToNot(HaveOccurred())
 
-			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-2"), 0755)
+			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-2"), 0o755)
 			Expect(err).ToNot(HaveOccurred())
 
 			_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-download-2"), "", tempFile.Name(), "", "")
 			Expect(err).ToNot(HaveOccurred())
 
-			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-3"), 0755)
+			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-3"), 0o755)
 			Expect(err).ToNot(HaveOccurred())
 
 			_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-download-3"), "", tempFile.Name(), "", "")
@@ -265,7 +263,7 @@ var _ = Describe("in", func() {
 					tempFilePath := filepath.Join(tempDir, "file-to-download.txt")
 					tempTarballPath := filepath.Join(tempDir, "file-to-download.tgz")
 
-					err = os.WriteFile(tempFilePath, []byte("file-to-download-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("file-to-download-4"), 0o600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "file-to-download.txt")
@@ -341,7 +339,7 @@ var _ = Describe("in", func() {
 					tempFilePath := filepath.Join(tempDir, "file-to-download.txt")
 					tempTarballPath := filepath.Join(tempDir, "file-to-download.tgz")
 
-					err = os.WriteFile(tempFilePath, []byte("file-to-download-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("file-to-download-4"), 0o600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "file-to-download.txt")
@@ -494,7 +492,6 @@ var _ = Describe("in", func() {
 					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
-
 				})
 			})
 
@@ -541,19 +538,19 @@ var _ = Describe("in", func() {
 					Expect(err).ToNot(HaveOccurred())
 					tempFile.Close()
 
-					err = os.WriteFile(tempFile.Name(), []byte("generation-1"), 0755)
+					err = os.WriteFile(tempFile.Name(), []byte("generation-1"), 0o755)
 					Expect(err).ToNot(HaveOccurred())
 
 					_, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 					Expect(err).ToNot(HaveOccurred())
 
-					err = os.WriteFile(tempFile.Name(), []byte("generation-2"), 0755)
+					err = os.WriteFile(tempFile.Name(), []byte("generation-2"), 0o755)
 					Expect(err).ToNot(HaveOccurred())
 
 					generation2, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 					Expect(err).ToNot(HaveOccurred())
 
-					err = os.WriteFile(tempFile.Name(), []byte("generation-3"), 0755)
+					err = os.WriteFile(tempFile.Name(), []byte("generation-3"), 0o755)
 					Expect(err).ToNot(HaveOccurred())
 
 					_, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
@@ -627,9 +624,7 @@ var _ = Describe("in", func() {
 			})
 
 			Context("when the versioned file exists and 'skip_download' is specified as a get param", func() {
-				var (
-					generation int64
-				)
+				var generation int64
 
 				BeforeEach(func() {
 					tempDir, err := os.MkdirTemp("", directoryPrefix)
@@ -638,7 +633,7 @@ var _ = Describe("in", func() {
 					tempFilePath := filepath.Join(tempDir, "version.txt")
 					tempTarballPath := filepath.Join(tempDir, "version.tgz")
 
-					err = os.WriteFile(tempFilePath, []byte("generation-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("generation-4"), 0o600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "version.txt")
@@ -714,9 +709,7 @@ var _ = Describe("in", func() {
 			})
 
 			Context("when the versioned file exists and 'unpack' is specified", func() {
-				var (
-					generation int64
-				)
+				var generation int64
 
 				BeforeEach(func() {
 					tempDir, err := os.MkdirTemp("", directoryPrefix)
@@ -725,7 +718,7 @@ var _ = Describe("in", func() {
 					tempFilePath := filepath.Join(tempDir, "version.txt")
 					tempTarballPath := filepath.Join(tempDir, "version.tgz")
 
-					err = os.WriteFile(tempFilePath, []byte("generation-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("generation-4"), 0o600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "version.txt")
@@ -874,7 +867,6 @@ var _ = Describe("in", func() {
 					Expect(versionContents).To(Equal([]byte(strconv.FormatInt(0, 10))))
 
 					Expect(filepath.Join(destDir, "url")).ToNot(BeARegularFile())
-
 				})
 			})
 		})
