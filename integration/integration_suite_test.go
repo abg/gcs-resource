@@ -2,15 +2,15 @@ package integration_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
+	"testing"
 
-	"github.com/frodenas/gcs-resource"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 
-	"testing"
+	"github.com/frodenas/gcs-resource"
 )
 
 func TestIntegration(t *testing.T) {
@@ -61,7 +61,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 	Expect(versionedBucketName).ToNot(BeEmpty(), "must specify $GCS_RESOURCE_VERSIONED_BUCKET_NAME")
 
 	gcsClient, err = gcsresource.NewGCSClient(
-		ioutil.Discard,
+		io.Discard,
 		jsonKey,
 	)
 	Expect(err).ToNot(HaveOccurred())

@@ -2,7 +2,6 @@ package integration_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -29,10 +28,10 @@ var _ = Describe("GCSclient", func() {
 
 	Describe("with a non versioned bucket", func() {
 		BeforeEach(func() {
-			tempDir, err = ioutil.TempDir("", "gcs_client_integration_test")
+			tempDir, err = os.MkdirTemp("", "gcs_client_integration_test")
 			Expect(err).ToNot(HaveOccurred())
 
-			tempFile, err = ioutil.TempFile(tempDir, "file-to-upload")
+			tempFile, err = os.CreateTemp(tempDir, "file-to-upload")
 			Expect(err).ToNot(HaveOccurred())
 
 			tempFile.Write([]byte("hello-" + runtime))
@@ -92,7 +91,7 @@ var _ = Describe("GCSclient", func() {
 			err = gcsClient.DownloadFile(bucketName, filepath.Join(directoryPrefix, "file-to-upload-1"), 0, filepath.Join(tempDir, "downloaded-file"))
 			Expect(err).ToNot(HaveOccurred())
 
-			read, err := ioutil.ReadFile(filepath.Join(tempDir, "downloaded-file"))
+			read, err := os.ReadFile(filepath.Join(tempDir, "downloaded-file"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(read).To(Equal([]byte("hello-" + runtime)))
 		})
@@ -100,10 +99,10 @@ var _ = Describe("GCSclient", func() {
 
 	Describe("with a versioned bucket", func() {
 		BeforeEach(func() {
-			tempVerDir, err = ioutil.TempDir("", "gcs-versioned-upload-dir")
+			tempVerDir, err = os.MkdirTemp("", "gcs-versioned-upload-dir")
 			Expect(err).ToNot(HaveOccurred())
 
-			tempVerFile, err = ioutil.TempFile(tempVerDir, "file-to-upload")
+			tempVerFile, err = os.CreateTemp(tempVerDir, "file-to-upload")
 			Expect(err).ToNot(HaveOccurred())
 
 			tempVerFile.Write([]byte("hello-" + runtime))
@@ -195,7 +194,7 @@ var _ = Describe("GCSclient", func() {
 			err = gcsClient.DownloadFile(versionedBucketName, filepath.Join(directoryPrefix, "file-to-upload-1"), 0, filepath.Join(tempVerDir, "downloaded-file"))
 			Expect(err).ToNot(HaveOccurred())
 
-			read, err := ioutil.ReadFile(filepath.Join(tempVerDir, "downloaded-file"))
+			read, err := os.ReadFile(filepath.Join(tempVerDir, "downloaded-file"))
 			Expect(err).ToNot(HaveOccurred())
 			Expect(read).To(Equal([]byte("hello-" + runtime)))
 		})

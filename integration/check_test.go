@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -17,9 +16,10 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 
+	"github.com/google/uuid"
+
 	gcsresource "github.com/frodenas/gcs-resource"
 	"github.com/frodenas/gcs-resource/check"
-	"github.com/google/uuid"
 )
 
 var _ = Describe("check", func() {
@@ -176,23 +176,23 @@ var _ = Describe("check", func() {
 
 		Context("when the regexp matches something", func() {
 			BeforeEach(func() {
-				tempFile, err := ioutil.TempFile("", directoryPrefix)
+				tempFile, err := os.CreateTemp("", directoryPrefix)
 				Expect(err).ToNot(HaveOccurred())
 				tempFile.Close()
 
-				err = ioutil.WriteFile(tempFile.Name(), []byte("file-to-check-1"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-1"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
 				_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-check-1"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = ioutil.WriteFile(tempFile.Name(), []byte("file-to-check-3"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-3"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
 				_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-check-3"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = ioutil.WriteFile(tempFile.Name(), []byte("file-to-check-5"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("file-to-check-5"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
 				_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-check-5"), "", tempFile.Name(), "", "")
@@ -445,23 +445,23 @@ var _ = Describe("check", func() {
 
 		Context("when the file exists", func() {
 			BeforeEach(func() {
-				tempFile, err := ioutil.TempFile("", directoryPrefix)
+				tempFile, err := os.CreateTemp("", directoryPrefix)
 				Expect(err).ToNot(HaveOccurred())
 				tempFile.Close()
 
-				err = ioutil.WriteFile(tempFile.Name(), []byte("generation-1"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("generation-1"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
 				generation1, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = ioutil.WriteFile(tempFile.Name(), []byte("generation-2"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("generation-2"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
 				generation2, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 				Expect(err).ToNot(HaveOccurred())
 
-				err = ioutil.WriteFile(tempFile.Name(), []byte("generation-3"), 0755)
+				err = os.WriteFile(tempFile.Name(), []byte("generation-3"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
 				generation3, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,9 +15,10 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 
+	"github.com/google/uuid"
+
 	gcsresource "github.com/frodenas/gcs-resource"
 	"github.com/frodenas/gcs-resource/in"
-	"github.com/google/uuid"
 )
 
 var _ = Describe("in", func() {
@@ -33,7 +33,7 @@ var _ = Describe("in", func() {
 	)
 
 	BeforeEach(func() {
-		destDir, err = ioutil.TempDir("", "gcs_in_integration_test")
+		destDir, err = os.MkdirTemp("", "gcs_in_integration_test")
 		Expect(err).ToNot(HaveOccurred())
 
 		stdin = &bytes.Buffer{}
@@ -111,23 +111,23 @@ var _ = Describe("in", func() {
 			guid := uuid.NewString()
 			directoryPrefix = "in-request-files-" + guid
 
-			tempFile, err := ioutil.TempFile("", directoryPrefix)
+			tempFile, err := os.CreateTemp("", directoryPrefix)
 			Expect(err).ToNot(HaveOccurred())
 			tempFile.Close()
 
-			err = ioutil.WriteFile(tempFile.Name(), []byte("file-to-download-1"), 0755)
+			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-1"), 0755)
 			Expect(err).ToNot(HaveOccurred())
 
 			_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-download-1"), "", tempFile.Name(), "", "")
 			Expect(err).ToNot(HaveOccurred())
 
-			err = ioutil.WriteFile(tempFile.Name(), []byte("file-to-download-2"), 0755)
+			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-2"), 0755)
 			Expect(err).ToNot(HaveOccurred())
 
 			_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-download-2"), "", tempFile.Name(), "", "")
 			Expect(err).ToNot(HaveOccurred())
 
-			err = ioutil.WriteFile(tempFile.Name(), []byte("file-to-download-3"), 0755)
+			err = os.WriteFile(tempFile.Name(), []byte("file-to-download-3"), 0755)
 			Expect(err).ToNot(HaveOccurred())
 
 			_, err = gcsClient.UploadFile(bucketName, filepath.Join(directoryPrefix, "file-to-download-3"), "", tempFile.Name(), "", "")
@@ -191,17 +191,17 @@ var _ = Describe("in", func() {
 					}))
 
 					Expect(filepath.Join(destDir, "file-to-download-1")).To(BeARegularFile())
-					contents, err := ioutil.ReadFile(filepath.Join(destDir, "file-to-download-1"))
+					contents, err := os.ReadFile(filepath.Join(destDir, "file-to-download-1"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(contents).To(Equal([]byte("file-to-download-1")))
 
 					Expect(filepath.Join(destDir, "version")).To(BeARegularFile())
-					versionContents, err := ioutil.ReadFile(filepath.Join(destDir, "version"))
+					versionContents, err := os.ReadFile(filepath.Join(destDir, "version"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(versionContents).To(Equal([]byte("1")))
 
 					Expect(filepath.Join(destDir, "url")).To(BeARegularFile())
-					urlContents, err := ioutil.ReadFile(filepath.Join(destDir, "url"))
+					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
 				})
@@ -244,12 +244,12 @@ var _ = Describe("in", func() {
 					}))
 
 					Expect(filepath.Join(destDir, "file-to-download-0.0.0")).To(BeARegularFile())
-					contents, err := ioutil.ReadFile(filepath.Join(destDir, "file-to-download-0.0.0"))
+					contents, err := os.ReadFile(filepath.Join(destDir, "file-to-download-0.0.0"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(contents).To(Equal([]byte("foo")))
 
 					Expect(filepath.Join(destDir, "version")).To(BeARegularFile())
-					versionContents, err := ioutil.ReadFile(filepath.Join(destDir, "version"))
+					versionContents, err := os.ReadFile(filepath.Join(destDir, "version"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(versionContents).To(Equal([]byte("0.0.0")))
 
@@ -259,13 +259,13 @@ var _ = Describe("in", func() {
 
 			Context("when path exists and 'skip_download' is specified as a source param", func() {
 				BeforeEach(func() {
-					tempDir, err := ioutil.TempDir("", directoryPrefix)
+					tempDir, err := os.MkdirTemp("", directoryPrefix)
 					Expect(err).ToNot(HaveOccurred())
 
 					tempFilePath := filepath.Join(tempDir, "file-to-download.txt")
 					tempTarballPath := filepath.Join(tempDir, "file-to-download.tgz")
 
-					err = ioutil.WriteFile(tempFilePath, []byte("file-to-download-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("file-to-download-4"), 0600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "file-to-download.txt")
@@ -327,7 +327,7 @@ var _ = Describe("in", func() {
 					Expect(filepath.Join(destDir, "file-to-download.tgz")).NotTo(BeARegularFile())
 
 					Expect(filepath.Join(destDir, "url")).To(BeARegularFile())
-					urlContents, err := ioutil.ReadFile(filepath.Join(destDir, "url"))
+					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
 				})
@@ -335,13 +335,13 @@ var _ = Describe("in", func() {
 
 			Context("when path exists and 'unpack' is specified", func() {
 				BeforeEach(func() {
-					tempDir, err := ioutil.TempDir("", directoryPrefix)
+					tempDir, err := os.MkdirTemp("", directoryPrefix)
 					Expect(err).ToNot(HaveOccurred())
 
 					tempFilePath := filepath.Join(tempDir, "file-to-download.txt")
 					tempTarballPath := filepath.Join(tempDir, "file-to-download.tgz")
 
-					err = ioutil.WriteFile(tempFilePath, []byte("file-to-download-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("file-to-download-4"), 0600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "file-to-download.txt")
@@ -405,12 +405,12 @@ var _ = Describe("in", func() {
 					Expect(filepath.Join(destDir, "file-to-download.tgz")).To(BeARegularFile())
 
 					Expect(filepath.Join(destDir, "file-to-download.txt")).To(BeARegularFile())
-					contents, err := ioutil.ReadFile(filepath.Join(destDir, "file-to-download.txt"))
+					contents, err := os.ReadFile(filepath.Join(destDir, "file-to-download.txt"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(contents).To(Equal([]byte("file-to-download-4")))
 
 					Expect(filepath.Join(destDir, "url")).To(BeARegularFile())
-					urlContents, err := ioutil.ReadFile(filepath.Join(destDir, "url"))
+					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
 				})
@@ -481,17 +481,17 @@ var _ = Describe("in", func() {
 					}))
 
 					Expect(filepath.Join(destDir, "file-to-download-3")).To(BeARegularFile())
-					contents, err := ioutil.ReadFile(filepath.Join(destDir, "file-to-download-3"))
+					contents, err := os.ReadFile(filepath.Join(destDir, "file-to-download-3"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(contents).To(Equal([]byte("file-to-download-3")))
 
 					Expect(filepath.Join(destDir, "version")).To(BeARegularFile())
-					versionContents, err := ioutil.ReadFile(filepath.Join(destDir, "version"))
+					versionContents, err := os.ReadFile(filepath.Join(destDir, "version"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(versionContents).To(Equal([]byte("3")))
 
 					Expect(filepath.Join(destDir, "url")).To(BeARegularFile())
-					urlContents, err := ioutil.ReadFile(filepath.Join(destDir, "url"))
+					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
 
@@ -537,23 +537,23 @@ var _ = Describe("in", func() {
 		Context("when the bucket is versioned", func() {
 			Context("when the versioned file exists", func() {
 				BeforeEach(func() {
-					tempFile, err := ioutil.TempFile("", directoryPrefix)
+					tempFile, err := os.CreateTemp("", directoryPrefix)
 					Expect(err).ToNot(HaveOccurred())
 					tempFile.Close()
 
-					err = ioutil.WriteFile(tempFile.Name(), []byte("generation-1"), 0755)
+					err = os.WriteFile(tempFile.Name(), []byte("generation-1"), 0755)
 					Expect(err).ToNot(HaveOccurred())
 
 					_, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 					Expect(err).ToNot(HaveOccurred())
 
-					err = ioutil.WriteFile(tempFile.Name(), []byte("generation-2"), 0755)
+					err = os.WriteFile(tempFile.Name(), []byte("generation-2"), 0755)
 					Expect(err).ToNot(HaveOccurred())
 
 					generation2, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
 					Expect(err).ToNot(HaveOccurred())
 
-					err = ioutil.WriteFile(tempFile.Name(), []byte("generation-3"), 0755)
+					err = os.WriteFile(tempFile.Name(), []byte("generation-3"), 0755)
 					Expect(err).ToNot(HaveOccurred())
 
 					_, err = gcsClient.UploadFile(versionedBucketName, filepath.Join(directoryPrefix, "version"), "", tempFile.Name(), "", "")
@@ -610,17 +610,17 @@ var _ = Describe("in", func() {
 					}))
 
 					Expect(filepath.Join(destDir, "version")).To(BeARegularFile())
-					contents, err := ioutil.ReadFile(filepath.Join(destDir, "version"))
+					contents, err := os.ReadFile(filepath.Join(destDir, "version"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(contents).To(Equal([]byte("generation-2")))
 
 					Expect(filepath.Join(destDir, "generation")).To(BeARegularFile())
-					versionContents, err := ioutil.ReadFile(filepath.Join(destDir, "generation"))
+					versionContents, err := os.ReadFile(filepath.Join(destDir, "generation"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(versionContents).To(Equal([]byte(strconv.FormatInt(generation2, 10))))
 
 					Expect(filepath.Join(destDir, "url")).To(BeARegularFile())
-					urlContents, err := ioutil.ReadFile(filepath.Join(destDir, "url"))
+					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
 				})
@@ -632,13 +632,13 @@ var _ = Describe("in", func() {
 				)
 
 				BeforeEach(func() {
-					tempDir, err := ioutil.TempDir("", directoryPrefix)
+					tempDir, err := os.MkdirTemp("", directoryPrefix)
 					Expect(err).ToNot(HaveOccurred())
 
 					tempFilePath := filepath.Join(tempDir, "version.txt")
 					tempTarballPath := filepath.Join(tempDir, "version.tgz")
 
-					err = ioutil.WriteFile(tempFilePath, []byte("generation-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("generation-4"), 0600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "version.txt")
@@ -702,12 +702,12 @@ var _ = Describe("in", func() {
 					Expect(filepath.Join(destDir, "version.txt")).NotTo(BeARegularFile())
 
 					Expect(filepath.Join(destDir, "generation")).To(BeARegularFile())
-					versionContents, err := ioutil.ReadFile(filepath.Join(destDir, "generation"))
+					versionContents, err := os.ReadFile(filepath.Join(destDir, "generation"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(versionContents).To(Equal([]byte(strconv.FormatInt(generation, 10))))
 
 					Expect(filepath.Join(destDir, "url")).To(BeARegularFile())
-					urlContents, err := ioutil.ReadFile(filepath.Join(destDir, "url"))
+					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
 				})
@@ -719,13 +719,13 @@ var _ = Describe("in", func() {
 				)
 
 				BeforeEach(func() {
-					tempDir, err := ioutil.TempDir("", directoryPrefix)
+					tempDir, err := os.MkdirTemp("", directoryPrefix)
 					Expect(err).ToNot(HaveOccurred())
 
 					tempFilePath := filepath.Join(tempDir, "version.txt")
 					tempTarballPath := filepath.Join(tempDir, "version.tgz")
 
-					err = ioutil.WriteFile(tempFilePath, []byte("generation-4"), 0600)
+					err = os.WriteFile(tempFilePath, []byte("generation-4"), 0600)
 					Expect(err).ToNot(HaveOccurred())
 
 					command := exec.Command("tar", "czf", tempTarballPath, "-C", tempDir, "version.txt")
@@ -787,17 +787,17 @@ var _ = Describe("in", func() {
 					}))
 
 					Expect(filepath.Join(destDir, "version.txt")).To(BeARegularFile())
-					contents, err := ioutil.ReadFile(filepath.Join(destDir, "version.txt"))
+					contents, err := os.ReadFile(filepath.Join(destDir, "version.txt"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(contents).To(Equal([]byte("generation-4")))
 
 					Expect(filepath.Join(destDir, "generation")).To(BeARegularFile())
-					versionContents, err := ioutil.ReadFile(filepath.Join(destDir, "generation"))
+					versionContents, err := os.ReadFile(filepath.Join(destDir, "generation"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(versionContents).To(Equal([]byte(strconv.FormatInt(generation, 10))))
 
 					Expect(filepath.Join(destDir, "url")).To(BeARegularFile())
-					urlContents, err := ioutil.ReadFile(filepath.Join(destDir, "url"))
+					urlContents, err := os.ReadFile(filepath.Join(destDir, "url"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(urlContents).To(Equal([]byte(url)))
 				})
@@ -864,12 +864,12 @@ var _ = Describe("in", func() {
 					}))
 
 					Expect(filepath.Join(destDir, "missing")).To(BeARegularFile())
-					contents, err := ioutil.ReadFile(filepath.Join(destDir, "missing"))
+					contents, err := os.ReadFile(filepath.Join(destDir, "missing"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(contents).To(Equal([]byte("foo")), "")
 
 					Expect(filepath.Join(destDir, "generation")).To(BeARegularFile())
-					versionContents, err := ioutil.ReadFile(filepath.Join(destDir, "generation"))
+					versionContents, err := os.ReadFile(filepath.Join(destDir, "generation"))
 					Expect(err).ToNot(HaveOccurred())
 					Expect(versionContents).To(Equal([]byte(strconv.FormatInt(0, 10))))
 

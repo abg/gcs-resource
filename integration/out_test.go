@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -15,10 +14,11 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 
-	gcsresource "github.com/frodenas/gcs-resource"
-	"github.com/frodenas/gcs-resource/out"
 	"github.com/google/uuid"
 	"github.com/mholt/archiver/v3"
+
+	gcsresource "github.com/frodenas/gcs-resource"
+	"github.com/frodenas/gcs-resource/out"
 )
 
 var _ = Describe("out", func() {
@@ -33,7 +33,7 @@ var _ = Describe("out", func() {
 	)
 
 	BeforeEach(func() {
-		sourceDir, err = ioutil.TempDir("", "gcs_out_integration_test")
+		sourceDir, err = os.MkdirTemp("", "gcs_out_integration_test")
 		Expect(err).ToNot(HaveOccurred())
 
 		stdin = &bytes.Buffer{}
@@ -123,7 +123,7 @@ var _ = Describe("out", func() {
 		//		outRequest.Params.File = "file-to-*"
 		//		outRequest.Params.ContentType = "wrong-type"
 		//
-		//		err = ioutil.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
+		//		err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
 		//		Expect(err).ToNot(HaveOccurred())
 		//
 		//		err := json.NewEncoder(stdin).Encode(outRequest)
@@ -167,10 +167,10 @@ var _ = Describe("out", func() {
 
 		Context("when there are more than one match", func() {
 			BeforeEach(func() {
-				err = ioutil.WriteFile(filepath.Join(sourceDir, "file-to-upload-1"), []byte("contents"), 0755)
+				err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload-1"), []byte("contents"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
-				err = ioutil.WriteFile(filepath.Join(sourceDir, "file-to-upload-2"), []byte("contents"), 0755)
+				err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload-2"), []byte("contents"), 0755)
 				Expect(err).ToNot(HaveOccurred())
 
 				outRequest.Params.File = "file-to-upload-*"
@@ -196,7 +196,7 @@ var _ = Describe("out", func() {
 			guid := uuid.NewString()
 			directoryPrefix = "out-request-files-" + guid
 
-			err = ioutil.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
+			err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -345,7 +345,7 @@ var _ = Describe("out", func() {
 			guid := uuid.NewString()
 			directoryPrefix = "out-request-files-" + guid
 
-			err = ioutil.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
+			err = os.WriteFile(filepath.Join(sourceDir, "file-to-upload"), []byte("contents"), 0755)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -499,7 +499,7 @@ var _ = Describe("out", func() {
 			filePath = filepath.Join(sourceDir, "file-to-upload")
 			tarballName = "output-success.zip"
 
-			err = ioutil.WriteFile(filePath, []byte("contents"), 0755)
+			err = os.WriteFile(filePath, []byte("contents"), 0755)
 			Expect(err).ToNot(HaveOccurred())
 
 			err = archiver.Archive([]string{filePath}, filepath.Join(sourceDir, tarballName))

@@ -3,7 +3,6 @@ package in
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -65,7 +64,7 @@ func (command *InCommand) inByRegex(destinationDir string, request InRequest, sk
 	if isInitialVersion {
 		initialFilename := path.Base(request.Version.Path)
 
-		err = ioutil.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0644)
+		err = os.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0644)
 		if err != nil {
 			return InResponse{}, err
 		}
@@ -146,7 +145,7 @@ func (command *InCommand) inByVersionedFile(destinationDir string, request InReq
 	if isInitialVersion {
 		initialFilename := path.Base(request.Source.VersionedFile)
 
-		err = ioutil.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0644)
+		err = os.WriteFile(filepath.Join(destinationDir, initialFilename), request.Source.GetContents(), 0644)
 		if err != nil {
 			return InResponse{}, err
 		}
@@ -190,15 +189,15 @@ func (command *InCommand) inByVersionedFile(destinationDir string, request InReq
 }
 
 func (command *InCommand) writeVersionFile(version string, destinationDir string) error {
-	return ioutil.WriteFile(filepath.Join(destinationDir, "version"), []byte(version), 0644)
+	return os.WriteFile(filepath.Join(destinationDir, "version"), []byte(version), 0644)
 }
 
 func (command *InCommand) writeGenerationFile(generation int64, destinationDir string) error {
-	return ioutil.WriteFile(filepath.Join(destinationDir, "generation"), []byte(strconv.FormatInt(generation, 10)), 0644)
+	return os.WriteFile(filepath.Join(destinationDir, "generation"), []byte(strconv.FormatInt(generation, 10)), 0644)
 }
 
 func (command *InCommand) writeURLFile(url string, destinationDir string) error {
-	return ioutil.WriteFile(filepath.Join(destinationDir, "url"), []byte(url), 0644)
+	return os.WriteFile(filepath.Join(destinationDir, "url"), []byte(url), 0644)
 }
 
 func (command *InCommand) downloadFile(bucketName string, objectPath string, generation int64, localPath string) error {

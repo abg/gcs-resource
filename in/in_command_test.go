@@ -2,7 +2,6 @@ package in_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -28,7 +27,7 @@ var _ = Describe("In Command", func() {
 		)
 
 		BeforeEach(func() {
-			tmpPath, err = ioutil.TempDir("", "in_command")
+			tmpPath, err = os.MkdirTemp("", "in_command")
 			Expect(err).ToNot(HaveOccurred())
 
 			destDir = filepath.Join(tmpPath, "destination")
@@ -147,7 +146,7 @@ var _ = Describe("In Command", func() {
 					Expect(err).ToNot(HaveOccurred())
 
 					Expect(versionFile).To(BeAnExistingFile())
-					contents, err := ioutil.ReadFile(versionFile)
+					contents, err := os.ReadFile(versionFile)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(string(contents)).To(Equal("3.53"))
 				})
@@ -167,7 +166,7 @@ var _ = Describe("In Command", func() {
 					Expect(generation).To(Equal(int64(0)))
 
 					Expect(urlFile).To(BeAnExistingFile())
-					contents, err := ioutil.ReadFile(urlFile)
+					contents, err := os.ReadFile(urlFile)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(string(contents)).To(Equal("gs://bucket-name/folder/file-3.53.tgz"))
 				})
@@ -248,7 +247,7 @@ var _ = Describe("In Command", func() {
 					Expect(err).ToNot(HaveOccurred())
 
 					Expect(versionFile).To(BeAnExistingFile())
-					contents, err := ioutil.ReadFile(versionFile)
+					contents, err := os.ReadFile(versionFile)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(string(contents)).To(Equal("1.3"))
 				})
@@ -280,7 +279,7 @@ var _ = Describe("In Command", func() {
 					Expect(generation).To(Equal(int64(0)))
 
 					Expect(urlFile).To(BeAnExistingFile())
-					contents, err := ioutil.ReadFile(urlFile)
+					contents, err := os.ReadFile(urlFile)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(string(contents)).To(Equal("gs://bucket-name/folder/file-1.3.tgz"))
 				})
@@ -380,7 +379,7 @@ var _ = Describe("In Command", func() {
 							_, err := command.Run(destDir, request)
 							Expect(err).NotTo(HaveOccurred())
 
-							contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+							contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 							Expect(string(contents)).To(Equal("some-zip-file-content"))
 						})
 					})
@@ -397,7 +396,7 @@ var _ = Describe("In Command", func() {
 							_, err := command.Run(destDir, request)
 							Expect(err).NotTo(HaveOccurred())
 
-							contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+							contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 							Expect(string(contents)).To(Equal("some-tar-file-content"))
 						})
 					})
@@ -414,7 +413,7 @@ var _ = Describe("In Command", func() {
 							_, err := command.Run(destDir, request)
 							Expect(err).NotTo(HaveOccurred())
 
-							contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+							contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 							Expect(string(contents)).To(Equal("some-gzip-file-content"))
 						})
 					})
@@ -431,7 +430,7 @@ var _ = Describe("In Command", func() {
 							_, err := command.Run(destDir, request)
 							Expect(err).NotTo(HaveOccurred())
 
-							contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+							contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 							Expect(string(contents)).To(Equal("some-tgz-file-content"))
 						})
 					})
@@ -467,7 +466,7 @@ var _ = Describe("In Command", func() {
 					Expect(err).ToNot(HaveOccurred())
 
 					Expect(versionFile).To(BeAnExistingFile())
-					contents, err := ioutil.ReadFile(versionFile)
+					contents, err := os.ReadFile(versionFile)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(string(contents)).To(Equal("0.0.0"))
 				})
@@ -480,7 +479,7 @@ var _ = Describe("In Command", func() {
 					Expect(err).ToNot(HaveOccurred())
 
 					Expect(versionFile).To(BeAnExistingFile())
-					contents, err := ioutil.ReadFile(versionFile)
+					contents, err := os.ReadFile(versionFile)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(string(contents)).To(Equal(""))
 				})
@@ -498,7 +497,7 @@ var _ = Describe("In Command", func() {
 						Expect(err).ToNot(HaveOccurred())
 
 						Expect(versionFile).To(BeAnExistingFile())
-						contents, err := ioutil.ReadFile(versionFile)
+						contents, err := os.ReadFile(versionFile)
 						Expect(err).ToNot(HaveOccurred())
 						Expect(string(contents)).To(Equal("foo"))
 
@@ -543,7 +542,7 @@ var _ = Describe("In Command", func() {
 				Expect(err).ToNot(HaveOccurred())
 
 				Expect(generationFile).To(BeAnExistingFile())
-				contents, err := ioutil.ReadFile(generationFile)
+				contents, err := os.ReadFile(generationFile)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(contents)).To(Equal("12345"))
 			})
@@ -563,7 +562,7 @@ var _ = Describe("In Command", func() {
 				Expect(generation).To(Equal(int64(12345)))
 
 				Expect(urlFile).To(BeAnExistingFile())
-				contents, err := ioutil.ReadFile(urlFile)
+				contents, err := os.ReadFile(urlFile)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(contents)).To(Equal("gs://bucket-name/folder/version#12345"))
 			})
@@ -675,7 +674,7 @@ var _ = Describe("In Command", func() {
 						_, err := command.Run(destDir, request)
 						Expect(err).NotTo(HaveOccurred())
 
-						contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+						contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 						Expect(string(contents)).To(Equal("some-zip-file-content"))
 					})
 				})
@@ -692,7 +691,7 @@ var _ = Describe("In Command", func() {
 						_, err := command.Run(destDir, request)
 						Expect(err).NotTo(HaveOccurred())
 
-						contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+						contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 						Expect(string(contents)).To(Equal("some-tar-file-content"))
 					})
 				})
@@ -709,7 +708,7 @@ var _ = Describe("In Command", func() {
 						_, err := command.Run(destDir, request)
 						Expect(err).NotTo(HaveOccurred())
 
-						contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+						contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 						Expect(string(contents)).To(Equal("some-gzip-file-content"))
 					})
 				})
@@ -726,7 +725,7 @@ var _ = Describe("In Command", func() {
 						_, err := command.Run(destDir, request)
 						Expect(err).NotTo(HaveOccurred())
 
-						contents, _ := ioutil.ReadFile(filepath.Join(destDir, "file-0.txt"))
+						contents, _ := os.ReadFile(filepath.Join(destDir, "file-0.txt"))
 						Expect(string(contents)).To(Equal("some-tgz-file-content"))
 					})
 				})

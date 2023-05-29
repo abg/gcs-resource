@@ -2,7 +2,6 @@ package out_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -28,7 +27,7 @@ var _ = Describe("Out Command", func() {
 		)
 
 		BeforeEach(func() {
-			tmpPath, err = ioutil.TempDir("", "out_command")
+			tmpPath, err = os.MkdirTemp("", "out_command")
 			Expect(err).ToNot(HaveOccurred())
 
 			sourceDir = filepath.Join(tmpPath, "source")
