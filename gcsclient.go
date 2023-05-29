@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/cheggaaa/pb/v3"
@@ -119,7 +120,7 @@ func (g *gcsclient) DownloadFile(bucketName, objectPath string, generation int64
 	}
 	defer rc.Close()
 
-	_, err = io.Copy(localFile, rc)
+	_, err = io.Copy(localFile, progress.NewProxyReader(rc))
 	if err != nil {
 		return err
 	}
@@ -150,7 +151,7 @@ func (g *gcsclient) UploadFile(bucketName, objectPath, objectContentType, localP
 
 	ctx := context.Background()
 	wc := g.storageService.Bucket(bucketName).Object(objectPath).NewWriter(ctx)
-	if _, err = io.Copy(wc, localFile); err != nil {
+	if _, err = io.Copy(wc, progress.NewProxyReader(localFile)); err != nil {
 		return 0, err
 	}
 
@@ -299,8 +300,12 @@ func (g *gcsclient) getObjectGenerations(bucketName, objectPath string) ([]int64
 }
 
 func (g *gcsclient) newProgressBar(total int64) *pb.ProgressBar {
+	const tmpl = `{{with string . "prefix"}}{{.}} {{end}}{{counters . }} {{bar . }} {{percent . }} {{speed . "%s"}} {{rtime . "ETA %s"}}{{with string . "suffix"}} {{.}}{{end}}`
 	return pb.New64(total).
+		SetWidth(80).
 		Set(pb.Bytes, true).
 		SetWriter(g.progressOutput).
-		SetWidth(80)
+		Set(pb.ReturnSymbol, "\r").
+		SetRefreshRate(time.Second).
+		SetTemplate(tmpl)
 }

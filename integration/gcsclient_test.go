@@ -34,7 +34,7 @@ var _ = Describe("GCSclient", func() {
 			tempFile, err = os.CreateTemp(tempDir, "file-to-upload")
 			Expect(err).ToNot(HaveOccurred())
 
-			tempFile.Write([]byte("hello-" + runtime))
+			Expect(tempFile.Write([]byte("hello-" + runtime))).Error().NotTo(HaveOccurred())
 		})
 
 		AfterEach(func() {
@@ -105,7 +105,7 @@ var _ = Describe("GCSclient", func() {
 			tempVerFile, err = os.CreateTemp(tempVerDir, "file-to-upload")
 			Expect(err).ToNot(HaveOccurred())
 
-			tempVerFile.Write([]byte("hello-" + runtime))
+			Expect(tempVerFile.Write([]byte("hello-" + runtime))).Error().NotTo(HaveOccurred())
 		})
 
 		AfterEach(func() {
