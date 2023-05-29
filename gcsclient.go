@@ -57,8 +57,8 @@ func NewGCSClient(
 	}, nil
 }
 
-func (gcsclient *gcsclient) BucketObjects(bucketName, prefix string) ([]string, error) {
-	bucketObjects, err := gcsclient.getBucketObjects(bucketName, prefix)
+func (g *gcsclient) BucketObjects(bucketName, prefix string) ([]string, error) {
+	bucketObjects, err := g.getBucketObjects(bucketName, prefix)
 	if err != nil {
 		return []string{}, err
 	}
@@ -66,8 +66,8 @@ func (gcsclient *gcsclient) BucketObjects(bucketName, prefix string) ([]string, 
 	return bucketObjects, nil
 }
 
-func (gcsclient *gcsclient) ObjectGenerations(bucketName, objectPath string) ([]int64, error) {
-	isBucketVersioned, err := gcsclient.getBucketVersioning(bucketName)
+func (g *gcsclient) ObjectGenerations(bucketName, objectPath string) ([]int64, error) {
+	isBucketVersioned, err := g.getBucketVersioning(bucketName)
 	if err != nil {
 		return []int64{}, err
 	}
@@ -76,7 +76,7 @@ func (gcsclient *gcsclient) ObjectGenerations(bucketName, objectPath string) ([]
 		return []int64{}, errors.New("bucket is not versioned")
 	}
 
-	objectGenerations, err := gcsclient.getObjectGenerations(bucketName, objectPath)
+	objectGenerations, err := g.getObjectGenerations(bucketName, objectPath)
 	if err != nil {
 		return []int64{}, err
 	}
@@ -84,8 +84,8 @@ func (gcsclient *gcsclient) ObjectGenerations(bucketName, objectPath string) ([]
 	return objectGenerations, nil
 }
 
-func (gcsclient *gcsclient) DownloadFile(bucketName, objectPath string, generation int64, localPath string) error {
-	isBucketVersioned, err := gcsclient.getBucketVersioning(bucketName)
+func (g *gcsclient) DownloadFile(bucketName, objectPath string, generation int64, localPath string) error {
+	isBucketVersioned, err := g.getBucketVersioning(bucketName)
 	if err != nil {
 		return err
 	}
@@ -94,12 +94,12 @@ func (gcsclient *gcsclient) DownloadFile(bucketName, objectPath string, generati
 		return errors.New("bucket is not versioned")
 	}
 
-	attrs, err := gcsclient.GetBucketObjectInfo(bucketName, objectPath)
+	attrs, err := g.GetBucketObjectInfo(bucketName, objectPath)
 	if err != nil {
 		return err
 	}
 
-	progress := gcsclient.newProgressBar(int64(attrs.Size))
+	progress := g.newProgressBar(int64(attrs.Size))
 	defer progress.Finish()
 	progress.Start()
 
@@ -109,7 +109,7 @@ func (gcsclient *gcsclient) DownloadFile(bucketName, objectPath string, generati
 	}
 	defer localFile.Close()
 	ctx := context.Background()
-	objectHandle := gcsclient.storageService.Bucket(bucketName).Object(objectPath)
+	objectHandle := g.storageService.Bucket(bucketName).Object(objectPath)
 	if generation != 0 {
 		objectHandle = objectHandle.Generation(generation)
 	}
@@ -127,8 +127,8 @@ func (gcsclient *gcsclient) DownloadFile(bucketName, objectPath string, generati
 	return nil
 }
 
-func (gcsclient *gcsclient) UploadFile(bucketName, objectPath, objectContentType, localPath, predefinedACL, cacheControl string) (int64, error) {
-	isBucketVersioned, err := gcsclient.getBucketVersioning(bucketName)
+func (g *gcsclient) UploadFile(bucketName, objectPath, objectContentType, localPath, predefinedACL, cacheControl string) (int64, error) {
+	isBucketVersioned, err := g.getBucketVersioning(bucketName)
 	if err != nil {
 		return 0, err
 	}
@@ -144,12 +144,12 @@ func (gcsclient *gcsclient) UploadFile(bucketName, objectPath, objectContentType
 	}
 	defer localFile.Close()
 
-	progress := gcsclient.newProgressBar(stat.Size())
+	progress := g.newProgressBar(stat.Size())
 	progress.Start()
 	defer progress.Finish()
 
 	ctx := context.Background()
-	wc := gcsclient.storageService.Bucket(bucketName).Object(objectPath).NewWriter(ctx)
+	wc := g.storageService.Bucket(bucketName).Object(objectPath).NewWriter(ctx)
 	if _, err = io.Copy(wc, localFile); err != nil {
 		return 0, err
 	}
@@ -176,14 +176,14 @@ func (gcsclient *gcsclient) UploadFile(bucketName, objectPath, objectContentType
 			PredefinedACL: predefinedACL,
 		}
 		ctx = context.Background()
-		_, err = gcsclient.storageService.Bucket(bucketName).Object(objectPath).Update(ctx, attrs)
+		_, err = g.storageService.Bucket(bucketName).Object(objectPath).Update(ctx, attrs)
 		if err != nil {
 			return 0, nil
 		}
 	}
 
 	if isBucketVersioned {
-		attrs, err := gcsclient.GetBucketObjectInfo(bucketName, objectPath)
+		attrs, err := g.GetBucketObjectInfo(bucketName, objectPath)
 		if err != nil {
 			return 0, err
 		}
@@ -192,9 +192,9 @@ func (gcsclient *gcsclient) UploadFile(bucketName, objectPath, objectContentType
 	return 0, nil
 }
 
-func (gcsclient *gcsclient) URL(bucketName, objectPath string, generation int64) (string, error) {
+func (g *gcsclient) URL(bucketName, objectPath string, generation int64) (string, error) {
 	ctx := context.Background()
-	objectHandle := gcsclient.storageService.Bucket(bucketName).Object(objectPath)
+	objectHandle := g.storageService.Bucket(bucketName).Object(objectPath)
 	if generation != 0 {
 		objectHandle = objectHandle.Generation(generation)
 	}
@@ -213,13 +213,13 @@ func (gcsclient *gcsclient) URL(bucketName, objectPath string, generation int64)
 	return url, nil
 }
 
-func (gcsclient *gcsclient) DeleteObject(bucketName, objectPath string, generation int64) error {
+func (g *gcsclient) DeleteObject(bucketName, objectPath string, generation int64) error {
 	var err error
 	ctx := context.Background()
 	if generation != 0 {
-		err = gcsclient.storageService.Bucket(bucketName).Object(objectPath).Generation(generation).Delete(ctx)
+		err = g.storageService.Bucket(bucketName).Object(objectPath).Generation(generation).Delete(ctx)
 	} else {
-		err = gcsclient.storageService.Bucket(bucketName).Object(objectPath).Delete(ctx)
+		err = g.storageService.Bucket(bucketName).Object(objectPath).Delete(ctx)
 	}
 	if err != nil {
 		return err
@@ -227,16 +227,16 @@ func (gcsclient *gcsclient) DeleteObject(bucketName, objectPath string, generati
 	return nil
 }
 
-func (gcsclient *gcsclient) GetBucketObjectInfo(bucketName, objectPath string) (*storage.ObjectAttrs, error) {
+func (g *gcsclient) GetBucketObjectInfo(bucketName, objectPath string) (*storage.ObjectAttrs, error) {
 	ctx := context.Background()
-	attrs, err := gcsclient.storageService.Bucket(bucketName).Object(objectPath).Attrs(ctx)
+	attrs, err := g.storageService.Bucket(bucketName).Object(objectPath).Attrs(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return attrs, nil
 }
 
-func (gcsclient *gcsclient) getBucketObjects(bucketName, prefix string) ([]string, error) {
+func (g *gcsclient) getBucketObjects(bucketName, prefix string) ([]string, error) {
 	var bucketObjects []string
 	ctx := context.Background()
 	pageToken := ""
@@ -245,7 +245,7 @@ func (gcsclient *gcsclient) getBucketObjects(bucketName, prefix string) ([]strin
 		Prefix:    prefix,
 		Versions:  false,
 	}
-	objectIterator := gcsclient.storageService.Bucket(bucketName).Objects(ctx, query)
+	objectIterator := g.storageService.Bucket(bucketName).Objects(ctx, query)
 	for {
 		object, err := objectIterator.Next()
 		if err == iterator.Done {
@@ -260,9 +260,9 @@ func (gcsclient *gcsclient) getBucketObjects(bucketName, prefix string) ([]strin
 	return bucketObjects, nil
 }
 
-func (gcsclient *gcsclient) getBucketVersioning(bucketName string) (bool, error) {
+func (g *gcsclient) getBucketVersioning(bucketName string) (bool, error) {
 	ctx := context.Background()
-	bucket, err := gcsclient.storageService.Bucket(bucketName).Attrs(ctx)
+	bucket, err := g.storageService.Bucket(bucketName).Attrs(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -270,7 +270,7 @@ func (gcsclient *gcsclient) getBucketVersioning(bucketName string) (bool, error)
 	return bucket.VersioningEnabled, nil
 }
 
-func (gcsclient *gcsclient) getObjectGenerations(bucketName, objectPath string) ([]int64, error) {
+func (g *gcsclient) getObjectGenerations(bucketName, objectPath string) ([]int64, error) {
 	var objectGenerations []int64
 	ctx := context.Background()
 	pageToken := ""
@@ -279,7 +279,7 @@ func (gcsclient *gcsclient) getObjectGenerations(bucketName, objectPath string) 
 		Prefix:    objectPath,
 		Versions:  true,
 	}
-	objectIterator := gcsclient.storageService.Bucket(bucketName).Objects(ctx, query)
+	objectIterator := g.storageService.Bucket(bucketName).Objects(ctx, query)
 	for {
 		object, err := objectIterator.Next()
 
@@ -298,9 +298,9 @@ func (gcsclient *gcsclient) getObjectGenerations(bucketName, objectPath string) 
 	return objectGenerations, nil
 }
 
-func (gcsclient *gcsclient) newProgressBar(total int64) *pb.ProgressBar {
+func (g *gcsclient) newProgressBar(total int64) *pb.ProgressBar {
 	return pb.New64(total).
 		Set(pb.Bytes, true).
-		SetWriter(gcsclient.progressOutput).
+		SetWriter(g.progressOutput).
 		SetWidth(80)
 }
