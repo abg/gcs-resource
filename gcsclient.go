@@ -177,10 +177,10 @@ func (g *gcsclient) UploadFile(bucketName, objectPath, objectContentType, localP
 			PredefinedACL: predefinedACL,
 		}
 		ctx = context.Background()
-		_, err = g.storageService.Bucket(bucketName).Object(objectPath).Update(ctx, attrs)
-		if err != nil {
-			return 0, nil
-		}
+		// TODO: Should this error be handled?
+		//       This can fail if a bucket is configured with "uniform access", so we cannot necessarily add a per-object acl
+		//       Previously when this failed, a nil error was returned and the follower "generation lookup" logic was skipped
+		_, _ = g.storageService.Bucket(bucketName).Object(objectPath).Update(ctx, attrs)
 	}
 
 	if isBucketVersioned {
